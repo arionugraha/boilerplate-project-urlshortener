@@ -30,7 +30,7 @@ app.post("/api/shorturl", async (req, res) => {
       !req.body.url.startsWith("http://") &&
       !req.body.url.startsWith("https://")
     ) {
-      return res.json({ error: "invalid url atas" });
+      return res.json({ error: "invalid url" });
     }
 
     const submittedUrl = new URL(req.body.url);
