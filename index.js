@@ -29,6 +29,16 @@ app.post("/api/shorturl", async (req, res) => {
     const submittedUrl = new URL(req.body.url);
     const domain = submittedUrl.hostname;
     await lookupPromise(domain);
+
+    if (
+      !submittedUrl.startsWith("http://") &&
+      !submittedUrl.startsWith("https://")
+    ) {
+      return res.json({
+        error: "invalid url",
+      });
+    }
+
     const savedUrl = await db.createShortenedUrl(submittedUrl);
     res.json({
       original_url: savedUrl.original_url,
@@ -38,7 +48,7 @@ app.post("/api/shorturl", async (req, res) => {
     if (error.code === "ENOTFOUND") {
       res.json({ error: "Invalid Hostname" });
     } else if (error instanceof TypeError) {
-      res.json({ error: "Invalid URL" });
+      res.json({ error: "invalid URL" });
     } else {
       res.json({ error: "An unknown error occurred" });
     }
