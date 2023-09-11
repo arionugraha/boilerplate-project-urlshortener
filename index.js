@@ -26,18 +26,16 @@ app.get("/", function (req, res) {
 
 app.post("/api/shorturl", async (req, res) => {
   try {
+    if (
+      !req.body.url.startsWith("http://") &&
+      !req.body.url.startsWith("https://")
+    ) {
+      return res.json({ error: "invalid url atas" });
+    }
+
     const submittedUrl = new URL(req.body.url);
     const domain = submittedUrl.hostname;
     await lookupPromise(domain);
-
-    if (
-      !submittedUrl.startsWith("http://") &&
-      !submittedUrl.startsWith("https://")
-    ) {
-      return res.json({
-        error: "invalid url",
-      });
-    }
 
     const savedUrl = await db.createShortenedUrl(submittedUrl);
     res.json({
@@ -48,7 +46,7 @@ app.post("/api/shorturl", async (req, res) => {
     if (error.code === "ENOTFOUND") {
       res.json({ error: "Invalid Hostname" });
     } else if (error instanceof TypeError) {
-      res.json({ error: "invalid URL" });
+      res.json({ error: "invalid url" });
     } else {
       res.json({ error: "An unknown error occurred" });
     }
