@@ -45,7 +45,7 @@ app.post("/api/shorturl", async (req, res) => {
   }
 });
 
-app.get("/:code", async (req, res) => {
+app.get(["/:code", "/api/shorturl/:code"], async (req, res) => {
   try {
     let code = Number(req.params.code);
     let url = await db.getOriginalUrl(code);
